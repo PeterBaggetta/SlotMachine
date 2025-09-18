@@ -8,20 +8,24 @@
             const string QUIT = "0";
             const string CENTER_HORIZONTAL = "1";
             const string CENTER_VERTICAL = "2";
-            const string THREE_HORIZONTAL = "3";
-            const string THREE_VERTICAL = "4";
+            const string ALL_HORIZONTAL = "3";
+            const string ALL_VERTICAL = "4";
             const string TWO_DIAGONAL = "5";
             const string ALL_LINES = "6";
 
-            // Game Costs
-            const int ONE_DOLLAR = 1;
-            const int TWO_DOLLAR = 2;
-            const int THREE_DOLLAR = 3;
-            const int EIGHT_DOLLAR = 8;
-
             // Slot Machine Limits
             const int SLOT_MACHINE_LOWER_LIMIT = 0;
-            const int SLOT_MACHINE_UPPER_LIMIT = 3;
+            const int SLOT_MACHINE_UPPER_LIMIT = 2;
+
+            // Slot Machine size (MUST BE AN ODD NUMBER)
+            const int SLOT_MACHINE_SIZE = 5;
+
+            // Game Costs
+            const int ONE_LINE_COST = 1;
+            const int TWO_LINE_COST = 2;
+            const int ALL_HORIZONTAL_OR_VERTICAL_COST = SLOT_MACHINE_SIZE;
+            const int ALL_LINES_COST = (SLOT_MACHINE_SIZE*2) + 2;
+
 
             Random rand = new Random();
 
@@ -47,14 +51,14 @@
                 Console.WriteLine($"Your balance: ${playerMoney}");
                 int gameCost = 0;
 
-                Console.WriteLine($"\nChoose which lines you would like to play (${ONE_DOLLAR} per line):");
+                Console.WriteLine($"\nChoose which lines you would like to play (${ONE_LINE_COST} per line):");
                 Console.WriteLine($"\t{QUIT}. QUIT");
-                Console.WriteLine($"\t{CENTER_HORIZONTAL}. Center horizontal line\t(cost ${ONE_DOLLAR})");
-                Console.WriteLine($"\t{CENTER_VERTICAL}. Center vertical line\t\t(cost ${ONE_DOLLAR})");
-                Console.WriteLine($"\t{THREE_HORIZONTAL}. All three horizontal lines\t(cost ${THREE_DOLLAR})");
-                Console.WriteLine($"\t{THREE_VERTICAL}. All three vertical lines\t(cost ${THREE_DOLLAR})");
-                Console.WriteLine($"\t{TWO_DIAGONAL}. Both diagonals\t\t(cost ${TWO_DOLLAR})");
-                Console.WriteLine($"\t{ALL_LINES}. All Lines\t\t\t(cost ${EIGHT_DOLLAR})");
+                Console.WriteLine($"\t{CENTER_HORIZONTAL}. Center horizontal line\t(cost ${ONE_LINE_COST})");
+                Console.WriteLine($"\t{CENTER_VERTICAL}. Center vertical line\t\t(cost ${ONE_LINE_COST})");
+                Console.WriteLine($"\t{ALL_HORIZONTAL}. All horizontal lines\t\t(cost ${ALL_HORIZONTAL_OR_VERTICAL_COST})");
+                Console.WriteLine($"\t{ALL_VERTICAL}. All vertical lines\t\t(cost ${ALL_HORIZONTAL_OR_VERTICAL_COST})");
+                Console.WriteLine($"\t{TWO_DIAGONAL}. Both diagonals\t\t(cost ${TWO_LINE_COST})");
+                Console.WriteLine($"\t{ALL_LINES}. All Lines\t\t\t(cost ${ALL_LINES_COST})");
 
                 Console.WriteLine("Choose an option: ");
                 string userGameChoice = Console.ReadLine();
@@ -65,27 +69,27 @@
                         return;
 
                     case CENTER_HORIZONTAL:
-                        gameCost = ONE_DOLLAR;
+                        gameCost = ONE_LINE_COST;
                         break;
 
                     case CENTER_VERTICAL:
-                        gameCost = ONE_DOLLAR;
+                        gameCost = ONE_LINE_COST;
                         break;
 
-                    case THREE_HORIZONTAL:
-                        gameCost = THREE_DOLLAR;
+                    case ALL_HORIZONTAL:
+                        gameCost = ALL_HORIZONTAL_OR_VERTICAL_COST;
                         break;
 
-                    case THREE_VERTICAL:
-                        gameCost = THREE_DOLLAR;
+                    case ALL_VERTICAL:
+                        gameCost = ALL_HORIZONTAL_OR_VERTICAL_COST;
                         break;
 
                     case TWO_DIAGONAL:
-                        gameCost = TWO_DOLLAR;
+                        gameCost = TWO_LINE_COST;
                         break;
 
                     case ALL_LINES:
-                        gameCost = EIGHT_DOLLAR;
+                        gameCost = ALL_LINES_COST;
                         break;
 
                     default:
@@ -106,11 +110,11 @@
                 playerMoney -= gameCost;
 
                 // Print and Generate slot machine numbers
-                int[,] slotMachine = new int[3, 3];
+                int[,] slotMachine = new int[SLOT_MACHINE_SIZE, SLOT_MACHINE_SIZE];
                 Console.WriteLine();
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < SLOT_MACHINE_SIZE; i++)
                 {
-                    for (int j = 0; j < 3; j++)
+                    for (int j = 0; j < SLOT_MACHINE_SIZE; j++)
                     {
                         slotMachine[i, j] = rand.Next(SLOT_MACHINE_LOWER_LIMIT, SLOT_MACHINE_UPPER_LIMIT);
                         Console.Write($"{slotMachine[i, j]} ");
@@ -129,21 +133,21 @@
                         return;
 
                     case CENTER_HORIZONTAL:
-                        if (CheckRowWin(slotMachine, 1))
+                        if (CheckRowWin(slotMachine, SLOT_MACHINE_SIZE/2))
                         {
                             numWins++;
                         }
                         break;
 
                     case CENTER_VERTICAL:
-                        if (CheckColWin(slotMachine, 1))
+                        if (CheckColWin(slotMachine, SLOT_MACHINE_SIZE/2))
                         {
                             numWins++;
                         }
                         break;
 
-                    case THREE_HORIZONTAL:
-                        for (int row = 0; row < 3; row++)
+                    case ALL_HORIZONTAL:
+                        for (int row = 0; row < SLOT_MACHINE_SIZE; row++)
                         {
                             if (CheckRowWin(slotMachine, row))
                             {
@@ -152,8 +156,8 @@
                         }
                         break;
 
-                    case THREE_VERTICAL:
-                        for (int col = 0; col < 3; col++)
+                    case ALL_VERTICAL:
+                        for (int col = 0; col < SLOT_MACHINE_SIZE; col++)
                         {
                             if (CheckColWin(slotMachine, col))
                             {
@@ -176,7 +180,7 @@
 
                     case ALL_LINES:
                         // Check Rows
-                        for (int row = 0; row < 3; row++)
+                        for (int row = 0; row < SLOT_MACHINE_SIZE; row++)
                         {
                             if (CheckRowWin(slotMachine, row))
                             {
@@ -184,7 +188,7 @@
                             }
                         }
                         // Check Columns
-                        for (int col = 0; col < 3; col++)
+                        for (int col = 0; col < SLOT_MACHINE_SIZE; col++)
                         {
                             if (CheckColWin(slotMachine, col))
                             {
@@ -237,25 +241,65 @@
         // Check Row Win
         static bool CheckRowWin(int[,] slotMachine, int row)
         {
-            return (slotMachine[row, 0] == slotMachine[row, 1] && slotMachine[row, 1] == slotMachine[row, 2]);
+            int numCols = slotMachine.GetLength(1);
+            int firstColNum = slotMachine[row, 0];
+
+            for (int c = 1; c < numCols; c++)
+            {
+                if (slotMachine[row, c] != firstColNum)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         // Check Column Win
         static bool CheckColWin(int[,] slotMachine, int col)
         {
-            return (slotMachine[0, col] == slotMachine[1, col] && slotMachine[1, col] == slotMachine[2, col]);
+            int numRows = slotMachine.GetLength(0);
+            int firstRowNum = slotMachine[0, col];
+
+            for (int r = 1; r < numRows; r++)
+            {
+                if (slotMachine[r, col] != firstRowNum)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         // Check Diagonal1 Win (top left to bottom right)
         static bool CheckDiagonalWin1(int[,] slotMachine)
         {
-            return (slotMachine[0, 0] == slotMachine[1, 1] && slotMachine[1, 1] == slotMachine[2, 2]);
+            int numRows = slotMachine.GetLength(0);
+            int firstNum = slotMachine[0, 0];
+
+            for (int i = 1; i < numRows; i++)
+            {
+                if (slotMachine[i, i] != firstNum)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         // Check Diagonal2 Win (top right to bottom left)
         static bool CheckDiagonalWin2(int[,] slotMachine)
         {
-            return (slotMachine[0, 2] == slotMachine[1, 1] && slotMachine[1, 1] == slotMachine[2, 0]);
+            int numRows = slotMachine.GetLength(0);
+            int firstNum = slotMachine[0, numRows - 1];
+
+            for (int i = 1; i < numRows; i++)
+            {
+                if (slotMachine[i, numRows - i - 1] != firstNum)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }
