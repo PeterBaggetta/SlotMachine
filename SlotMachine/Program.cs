@@ -18,13 +18,10 @@
             const int SLOT_MACHINE_UPPER_LIMIT = 2;
 
             // Slot Machine size (MUST BE AN ODD NUMBER)
-            const int SLOT_MACHINE_SIZE = 5;
+            const int SLOT_MACHINE_SIZE = 7;
 
             // Game Costs
             const int ONE_LINE_COST = 1;
-            const int TWO_LINE_COST = 2;
-            const int ALL_HORIZONTAL_OR_VERTICAL_COST = SLOT_MACHINE_SIZE;
-            const int ALL_LINES_COST = (SLOT_MACHINE_SIZE*2) + 2;
 
 
             Random rand = new Random();
@@ -49,52 +46,35 @@
                 Console.Clear();
 
                 Console.WriteLine($"Your balance: ${playerMoney}");
-                int gameCost = 0;
 
                 Console.WriteLine($"\nChoose which lines you would like to play (${ONE_LINE_COST} per line):");
                 Console.WriteLine($"\t{QUIT}. QUIT");
-                Console.WriteLine($"\t{CENTER_HORIZONTAL}. Center horizontal line\t(cost ${ONE_LINE_COST})");
-                Console.WriteLine($"\t{CENTER_VERTICAL}. Center vertical line\t\t(cost ${ONE_LINE_COST})");
-                Console.WriteLine($"\t{ALL_HORIZONTAL}. All horizontal lines\t\t(cost ${ALL_HORIZONTAL_OR_VERTICAL_COST})");
-                Console.WriteLine($"\t{ALL_VERTICAL}. All vertical lines\t\t(cost ${ALL_HORIZONTAL_OR_VERTICAL_COST})");
-                Console.WriteLine($"\t{TWO_DIAGONAL}. Both diagonals\t\t(cost ${TWO_LINE_COST})");
-                Console.WriteLine($"\t{ALL_LINES}. All Lines\t\t\t(cost ${ALL_LINES_COST})");
+                Console.WriteLine($"\t{CENTER_HORIZONTAL}. Center horizontal line\t(cost ${ ONE_LINE_COST })");
+                Console.WriteLine($"\t{CENTER_VERTICAL}. Center vertical line\t\t(cost ${ ONE_LINE_COST })");
+                Console.WriteLine($"\t{ALL_HORIZONTAL}. All horizontal lines\t\t(cost ${ ONE_LINE_COST * SLOT_MACHINE_SIZE })");
+                Console.WriteLine($"\t{ALL_VERTICAL}. All vertical lines\t\t(cost ${ ONE_LINE_COST * SLOT_MACHINE_SIZE })");
+                Console.WriteLine($"\t{TWO_DIAGONAL}. Both diagonals\t\t(cost ${ ONE_LINE_COST * 2 })");
+                Console.WriteLine($"\t{ALL_LINES}. All Lines\t\t\t(cost ${ ((SLOT_MACHINE_SIZE * 2) + 2) * ONE_LINE_COST })");
 
                 Console.WriteLine("Choose an option: ");
                 string userGameChoice = Console.ReadLine();
-                switch (userGameChoice)
+
+                // Player quits game
+                if (userGameChoice == QUIT)
                 {
-                    case QUIT:
-                        Console.WriteLine("Thank you for playing!");
-                        return;
+                    Console.WriteLine("Thank you for playing!");
+                    return;
+                }
 
-                    case CENTER_HORIZONTAL:
-                        gameCost = ONE_LINE_COST;
-                        break;
+                // Calculate the cost of the game based on the choice picked
+                int gameCost = CalculateGameCost(userGameChoice, SLOT_MACHINE_SIZE, ONE_LINE_COST, CENTER_HORIZONTAL, CENTER_VERTICAL, ALL_HORIZONTAL, ALL_VERTICAL, TWO_DIAGONAL, ALL_LINES);
 
-                    case CENTER_VERTICAL:
-                        gameCost = ONE_LINE_COST;
-                        break;
-
-                    case ALL_HORIZONTAL:
-                        gameCost = ALL_HORIZONTAL_OR_VERTICAL_COST;
-                        break;
-
-                    case ALL_VERTICAL:
-                        gameCost = ALL_HORIZONTAL_OR_VERTICAL_COST;
-                        break;
-
-                    case TWO_DIAGONAL:
-                        gameCost = TWO_LINE_COST;
-                        break;
-
-                    case ALL_LINES:
-                        gameCost = ALL_LINES_COST;
-                        break;
-
-                    default:
-                        Console.WriteLine("\n**** Please enter a valid choice. ****\n");
-                        continue;
+                // Invalid option chosen by the player (allow them to re-enter)
+                if (gameCost == -1)
+                {
+                    Console.WriteLine("\n**** Please enter a valid choice. ****\n");
+                    Thread.Sleep(2000);
+                    continue;
                 }
 
 
@@ -133,14 +113,14 @@
                         return;
 
                     case CENTER_HORIZONTAL:
-                        if (CheckRowWin(slotMachine, SLOT_MACHINE_SIZE/2))
+                        if (CheckRowWin(slotMachine, SLOT_MACHINE_SIZE / 2))
                         {
                             numWins++;
                         }
                         break;
 
                     case CENTER_VERTICAL:
-                        if (CheckColWin(slotMachine, SLOT_MACHINE_SIZE/2))
+                        if (CheckColWin(slotMachine, SLOT_MACHINE_SIZE / 2))
                         {
                             numWins++;
                         }
@@ -236,6 +216,33 @@
             // Player does not have any money
             Console.WriteLine("\n\nYou do not have any money left.");
 
+        }
+
+        // Calcualte Game Cost
+        static int CalculateGameCost(string choice, int slotMachineSize, int oneLineCost, string CENTER_HORIZONTAL, string CENTER_VERTICAL, string ALL_HORIZONTAL, string ALL_VERTICAL, string TWO_DIAGONAL, string ALL_LINES)
+        {
+            if (choice == CENTER_HORIZONTAL || choice == CENTER_VERTICAL)
+            {
+                return oneLineCost;
+            }
+
+            if (choice == ALL_HORIZONTAL || choice == ALL_VERTICAL)
+            {
+                return slotMachineSize * oneLineCost;
+            }
+
+            if (choice == TWO_DIAGONAL)
+            {
+                return 2 * oneLineCost;
+            }
+
+            if (choice == ALL_LINES)
+            {
+                return ((slotMachineSize * 2) + 2) * oneLineCost;
+            }
+
+            // INVALID CHOICE
+            return -1;
         }
 
         // Check Row Win
