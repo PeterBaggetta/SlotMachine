@@ -2,27 +2,30 @@
 {
     internal class Program
     {
+        // Game Modes
+        const string QUIT = "0";
+        const string CENTER_HORIZONTAL = "1";
+        const string CENTER_VERTICAL = "2";
+        const string ALL_HORIZONTAL = "3";
+        const string ALL_VERTICAL = "4";
+        const string TWO_DIAGONAL = "5";
+        const string ALL_LINES = "6";
+
+        // Slot Machine Limits
+        const int SLOT_MACHINE_LOWER_LIMIT = 0;
+        const int SLOT_MACHINE_UPPER_LIMIT = 2;
+
+        // Slot Machine size (MUST BE AN ODD NUMBER)
+        const int SLOT_MACHINE_SIZE = 7;
+
+        // Game Costs
+        const int ONE_LINE_COST = 1;
+
+        // Play Again Character
+        const char PLAY_AGAIN = 'y';
+        
         static void Main(string[] args)
         {
-            // Game Modes
-            const string QUIT = "0";
-            const string CENTER_HORIZONTAL = "1";
-            const string CENTER_VERTICAL = "2";
-            const string ALL_HORIZONTAL = "3";
-            const string ALL_VERTICAL = "4";
-            const string TWO_DIAGONAL = "5";
-            const string ALL_LINES = "6";
-
-            // Slot Machine Limits
-            const int SLOT_MACHINE_LOWER_LIMIT = 0;
-            const int SLOT_MACHINE_UPPER_LIMIT = 2;
-
-            // Slot Machine size (MUST BE AN ODD NUMBER)
-            const int SLOT_MACHINE_SIZE = 7;
-
-            // Game Costs
-            const int ONE_LINE_COST = 1;
-
 
             Random rand = new Random();
 
@@ -67,7 +70,7 @@
                 }
 
                 // Calculate the cost of the game based on the choice picked
-                int gameCost = CalculateGameCost(userGameChoice, SLOT_MACHINE_SIZE, ONE_LINE_COST, CENTER_HORIZONTAL, CENTER_VERTICAL, ALL_HORIZONTAL, ALL_VERTICAL, TWO_DIAGONAL, ALL_LINES);
+                int gameCost = CalculateGameCost(userGameChoice);
 
                 // Invalid option chosen by the player (allow them to re-enter)
                 if (gameCost == -1)
@@ -205,7 +208,7 @@
                 Console.WriteLine("Want to spin again? (Y/N): ");
                 ConsoleKeyInfo playAgainInput = Console.ReadKey();
                 char playAgain = char.ToLower(playAgainInput.KeyChar);
-                if (playAgain != 'y')
+                if (playAgain != PLAY_AGAIN)
                 {
                     Console.WriteLine($"Thank you for playing! Your final balance is: ${playerMoney}.");
                     return;
@@ -219,26 +222,26 @@
         }
 
         // Calcualte Game Cost
-        static int CalculateGameCost(string choice, int slotMachineSize, int oneLineCost, string CENTER_HORIZONTAL, string CENTER_VERTICAL, string ALL_HORIZONTAL, string ALL_VERTICAL, string TWO_DIAGONAL, string ALL_LINES)
+        static int CalculateGameCost(string choice)
         {
             if (choice == CENTER_HORIZONTAL || choice == CENTER_VERTICAL)
             {
-                return oneLineCost;
+                return ONE_LINE_COST;
             }
 
             if (choice == ALL_HORIZONTAL || choice == ALL_VERTICAL)
             {
-                return slotMachineSize * oneLineCost;
+                return SLOT_MACHINE_SIZE * ONE_LINE_COST;
             }
 
             if (choice == TWO_DIAGONAL)
             {
-                return 2 * oneLineCost;
+                return 2 * ONE_LINE_COST;
             }
 
             if (choice == ALL_LINES)
             {
-                return ((slotMachineSize * 2) + 2) * oneLineCost;
+                return ((SLOT_MACHINE_SIZE * 2) + 2) * ONE_LINE_COST;
             }
 
             // INVALID CHOICE
